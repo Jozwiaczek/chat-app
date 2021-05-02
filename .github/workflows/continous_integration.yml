@@ -1,0 +1,76 @@
+name: 'Continuous Integration'
+on: [pull_request]
+
+jobs:
+  Validate:
+    name: 'Validate Pull Request'
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    container: node
+    env:
+      DB_PORT: 5432
+      DB_HOST: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres_password
+      DB_DATABASE_TEST: smart_gate_db_test
+      NODE_VERSION: 12.x
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: 'Git checkout'
+        uses: actions/checkout@v2
+
+      # Beginning of yarn setup, keep in sync between all workflows
+      - name: Use node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org/ # Needed for auth
+      - name: 'Use cached node_modules'
+        id: cache-modules
+        uses: actions/cache@v2.1.5
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-v${{ matrix.node-version }}-node_modules-${{ hashFiles('yarn.lock', '**/package.json') }}
+      - name: 'Find location of global yarn cache'
+        id: yarn-cache
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: 'Cache global yarn cache'
+        uses: actions/cache@v2.1.5
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: 'Install dependency'
+        run: yarn install --frozen-lockfile
+      # End of yarn setup
+
+      - name: 'Audit dependencies'
+        run: /bin/sh -c 'yarn audit --level high; [[ $? -ge 8 ]] && exit 1 || exit 0'
+      - name: 'Run Prettier'
+        run: yarn prettier
+      - name: 'Run ESLint'
+        run: yarn lint
+      - name: 'Run StyleLint'
+        run: yarn stylelint
+      - name: 'Setup test database'
+        run: cd packages/ci-scripts && yarn setup:testDB
+      - name: 'Run unit tests'
+        run: yarn test
+      - name: 'Run E2E tests'
+        run: yarn test:e2e
+      - name: 'Build API'
+        run: cd packages/api && yarn build
+      - name: 'Build Client'
+        run: cd packages/client && yarn build

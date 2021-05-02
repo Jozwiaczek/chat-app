@@ -1,0 +1,20 @@
+# For all config options check: https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#reviewersę
+
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    target-branch: 'dev'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    commit-message:
+      prefix: 'chore'
+      include_scope: false
+  - package-ecosystem: 'github-actions'
+    target-branch: 'dev'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    commit-message:
+      prefix: 'chore'
+      include_scope: false
