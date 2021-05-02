@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "lerna run build",
-    "check": "yarn lint:fix && yarn prettier:fix && yarn stylelint && yarn type-check && yarn test && npx sort-package-json",
+    "check": "yarn lint:fix && yarn prettier:fix && yarn stylelint && yarn type-check && yarn test && yarn sortPackageJson",
     "heroku-postbuild": "yarn install && cd packages/api && yarn typeorm-migration:run && yarn build",
     "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('Use yarn for installing')\"",
     "lint": "lerna run lint",
@@ -19,7 +19,7 @@
     "prettier:fix": "prettier --write .",
     "prepare": "husky install",
     "removeNodeModules": "find . -name \"node_modules\" -type d -prune -exec rm -rf '{}' +",
-    "sortPackageJson": "sort-package-json && lerna exec sort-package-json",
+    "sortPackageJson": "npx sort-package-json && lerna exec npx sort-package-json",
     "start": "cd packages/api && yarn start:prod",
     "test": "lerna run test",
     "type-check": "lerna run type-check"
