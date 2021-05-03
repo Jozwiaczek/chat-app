@@ -6,24 +6,8 @@ jobs:
     name: 'Validate Pull Request'
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container: node
     env:
-      DB_PORT: 5432
-      DB_HOST: postgres
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres_password
-      DB_DATABASE_TEST: smart_gate_db_test
       NODE_VERSION: 12.x
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres_password
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: 'Git checkout'
         uses: actions/checkout@v2
@@ -33,7 +17,6 @@ jobs:
         uses: actions/setup-node@v2.1.5
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: https://registry.npmjs.org/ # Needed for auth
       - name: 'Use cached node_modules'
         id: cache-modules
         uses: actions/cache@v2.1.5
@@ -64,12 +47,8 @@ jobs:
         run: yarn lint
       - name: 'Run StyleLint'
         run: yarn stylelint
-      - name: 'Setup test database'
-        run: cd packages/ci-scripts && yarn setup:testDB
       - name: 'Run unit tests'
         run: yarn test
-      - name: 'Run E2E tests'
-        run: yarn test:e2e
       - name: 'Build API'
         run: cd packages/api && yarn build
       - name: 'Build Client'
