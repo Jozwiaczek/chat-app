@@ -22,7 +22,7 @@ const useChat = () => {
       if (nickname === newTypingNickname) {
         return;
       }
-      setTypingUsers((prevNicknames) => [...prevNicknames, newTypingNickname]);
+      setTypingUsers((prevNicknames) => [...new Set([...prevNicknames, newTypingNickname])]);
     });
 
     internalSocket.on(API_EVENTS.userStopTyping, (stopTypingUser: string) => {
