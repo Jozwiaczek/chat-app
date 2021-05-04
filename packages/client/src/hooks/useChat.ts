@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import socketIOClient from 'socket.io-client';
 
-import { API_EVENTS, SOCKET_SERVER_URL } from '../constants';
+import API_EVENTS from '../constants/apiEvents';
 import useLocalStorage from './useLocalStorage';
 
 const useChat = () => {
@@ -9,9 +9,10 @@ const useChat = () => {
   const [socket, setSocket] = useState<SocketIOClient.Socket>();
   const [nickname] = useLocalStorage('nickname');
   const [typingUsers, setTypingUsers] = useState<Array<string>>([]);
+  const API_URL = process.env.REACT_APP_API_URL || 'localhost:3030';
 
   useEffect(() => {
-    const internalSocket = socketIOClient(SOCKET_SERVER_URL);
+    const internalSocket = socketIOClient(API_URL);
 
     internalSocket.on(API_EVENTS.newMessage, (newMessage: ApiMessage) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -43,7 +44,7 @@ const useChat = () => {
       internalSocket.disconnect();
       setSocket(undefined);
     };
-  }, [nickname]);
+  }, [API_URL, nickname]);
 
   const emitUserTyping = () => {
     socket?.emit(API_EVENTS.userTypingApi, nickname);

@@ -68,7 +68,6 @@ const Chat = () => {
     if (!isTyping) {
       setIsTyping(true);
       emitUserTyping();
-      console.log('test');
     }
   };
 

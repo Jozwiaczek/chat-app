@@ -1,6 +1,4 @@
-export const SOCKET_SERVER_URL = 'http://192.168.1.7:3030';
-
-export const API_EVENTS = {
+export default {
   newMessage: 'newMessage',
   userTyping: 'userTyping',
   userStopTyping: 'userStopTyping',
