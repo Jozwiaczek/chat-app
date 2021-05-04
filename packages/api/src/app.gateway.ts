@@ -9,19 +9,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-interface Message {
-  id: string;
-  body: string;
-  senderId: string;
-  nickname: string;
-  createdAt: Date;
-}
-
-interface User {
-  nickname: string;
-  id: string;
-}
-
 @WebSocketGateway()
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -38,10 +25,13 @@ export class AppGateway
     this.typingUsers = [];
   }
 
-  @SubscribeMessage('newMessageApi')
-  handleMessage(client: Socket, newMessage: Message): void {
-    this.messages.push(newMessage);
-    this.server.emit('newMessage', newMessage);
+  afterInit() {
+    this.logger.log('Socket connection initialized');
+  }
+
+  handleConnection(client: Socket) {
+    this.logger.log(`Client connected: ${client.id}`);
+    this.server.emit('syncMessages', this.messages);
   }
 
   @SubscribeMessage('userTypingApi')
@@ -56,8 +46,10 @@ export class AppGateway
     this.server.emit('userStopTyping', newTypingUsername);
   }
 
-  afterInit() {
-    this.logger.log('Init');
+  @SubscribeMessage('newMessageApi')
+  handleMessage(client: Socket, newMessage: Message): void {
+    this.messages.push(newMessage);
+    this.server.emit('newMessage', newMessage);
   }
 
   handleDisconnect(client: Socket) {
@@ -67,10 +59,5 @@ export class AppGateway
       this.server.emit('userStopTyping', currentUser.nickname);
     }
     this.typingUsers = this.typingUsers.filter(({ id }) => id !== client.id);
-  }
-
-  handleConnection(client: Socket) {
-    this.logger.log(`Client connected: ${client.id}`);
-    this.server.emit('syncMessages', this.messages);
   }
 }
