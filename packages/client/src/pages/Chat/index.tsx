@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { TextInput } from '../../elements';
 import { useLocalStorage, useMediaDevice } from '../../hooks';
@@ -30,6 +31,11 @@ const Chat = () => {
   const { isMobile } = useMediaDevice();
   const [isTyping, setIsTyping] = useState(false);
   const [newMessage, setNewMessage] = useState('');
+  const history = useHistory();
+
+  if (!nickname) {
+    history.replace(routesConfig.HOME);
+  }
 
   const handleNewMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(event.target.value);
