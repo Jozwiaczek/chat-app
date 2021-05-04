@@ -1,29 +1,29 @@
 import React, { ChangeEvent, KeyboardEvent, useLayoutEffect, useRef, useState } from 'react';
 
 import TextInput from '../../elements/TextInput';
-import { useChat, useLocalStorage } from '../../hooks';
-import { SendIcon } from '../../icons';
+import { useChat, useLocalStorage, useMediaDevice } from '../../hooks';
+import { SendIcon, UserIcon } from '../../icons';
 import {
   Card,
   CardHeader,
   ChatContainer,
   Container,
-  Message,
-  MessageBody,
-  MessageDetails,
   MessagesContainer,
   SendButton,
   SendMessageContainer,
 } from './Chat.styled';
+import Message from './Message';
+import NoMessagesInfo from './NoMessagesInfo';
 
 const Chat = () => {
   const { sendMessage, messages } = useChat();
   const [nickname] = useLocalStorage('nickname');
   const messageContainerRef = useRef<HTMLOListElement>(null);
+  const { isDesktop } = useMediaDevice();
 
   const [newMessage, setNewMessage] = useState('');
 
-  const handleNewMessageChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleNewMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(event.target.value);
   };
 
@@ -45,41 +45,30 @@ const Chat = () => {
     }
   }, [messages]);
 
-  const onInputKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+  const onInputKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (isDesktop && event.key === 'Enter' && !event.shiftKey) {
       handleSendMessage();
+      event.preventDefault();
     }
-  };
-
-  const formatMessageDate = (msgDate: Date): string => {
-    const formatter = new Intl.DateTimeFormat('en', {
-      timeStyle: 'short',
-    });
-    return formatter.format(new Date(msgDate));
   };
 
   return (
     <Container>
       <Card>
         <CardHeader>
+          <UserIcon />
           <h3>{nickname}</h3>
         </CardHeader>
         <ChatContainer>
           <MessagesContainer ref={messageContainerRef}>
-            {messages.map(({ body, nickname: msgNickname, createdAt }, index) => {
-              const isOwner = nickname === msgNickname;
-              return (
+            {messages.length ? (
+              messages.map((mappedMessage, index) => (
                 // eslint-disable-next-line react/no-array-index-key
-                <Message key={index} isOwner={isOwner}>
-                  <MessageDetails>
-                    <span>{msgNickname}</span>
-                    ,&nbsp;
-                    <span>{formatMessageDate(createdAt)}</span>
-                  </MessageDetails>
-                  <MessageBody isOwner={isOwner}>{body}</MessageBody>
-                </Message>
-              );
-            })}
+                <Message key={index} currentNickname={nickname} {...mappedMessage} />
+              ))
+            ) : (
+              <NoMessagesInfo />
+            )}
           </MessagesContainer>
           <SendMessageContainer>
             <TextInput

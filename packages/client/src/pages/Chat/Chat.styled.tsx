@@ -2,18 +2,19 @@ import styled, { css } from 'styled-components';
 
 import { Button } from '../../elements';
 
-interface MessageBaseProps {
-  isOwner: boolean;
-}
+export const Container = styled.div(
+  ({ theme: { breakpoints, up } }) => css`
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
 
-export const Container = styled.div`
-  display: flex;
-  height: 100vh;
-  justify-content: center;
-  overflow: hidden;
-  padding: 40px;
-  width: 100%;
-`;
+    ${up(breakpoints.md)} {
+      padding: 40px;
+    }
+  `,
+);
 
 export const Card = styled.div(
   ({ theme: { palette, sizes } }) => css`
@@ -35,14 +36,19 @@ export const ChatContainer = styled.div`
 `;
 
 export const MessagesContainer = styled.ol(
-  ({ theme: { palette } }) => css`
+  ({ theme: { palette, breakpoints, up } }) => css`
     display: flex;
+    flex: 1;
     flex-direction: column;
     margin-block-end: 0;
     margin-block-start: 0;
     max-height: calc(100% - 160px);
     overflow-y: auto;
-    padding: 0 20px;
+    padding: 0;
+
+    ${up(breakpoints.md)} {
+      padding: 0 20px;
+    }
 
     &::-webkit-scrollbar {
       width: 9px;
@@ -60,12 +66,18 @@ export const MessagesContainer = styled.ol(
   `,
 );
 
-export const SendMessageContainer = styled.div`
-  display: flex;
-  height: 100px;
-  margin: 10px 40px;
-  position: relative;
-`;
+export const SendMessageContainer = styled.div(
+  ({ theme: { breakpoints, up } }) => css`
+    display: flex;
+    height: 100px;
+    margin: 10px 20px;
+    position: relative;
+
+    ${up(breakpoints.md)} {
+      margin: 10px 40px;
+    }
+  `,
+);
 
 export const SendButton = styled(Button)`
   min-width: 0;
@@ -76,30 +88,17 @@ export const SendButton = styled(Button)`
 `;
 
 export const CardHeader = styled.div(
-  ({ theme: { palette } }) => css`
+  ({ theme: { palette, breakpoints, up } }) => css`
+    align-items: center;
     border-bottom: 2px solid ${palette.divider};
-    padding: 20px;
-  `,
-);
-
-export const Message = styled.li<MessageBaseProps>(
-  ({ isOwner }) => css`
-    align-items: ${isOwner ? 'flex-end' : 'flex-start'};
     display: flex;
-    flex-direction: column;
-    margin: 15px;
+    padding: 20px;
+    svg {
+      margin-right: 10px;
+    }
+
+    ${up(breakpoints.md)} {
+      padding: 20px 40px;
+    }
   `,
 );
-
-export const MessageBody = styled.p<MessageBaseProps>(
-  ({ theme: { palette }, isOwner }) => css`
-    background: ${isOwner ? palette.colors.blue : palette.colors.white};
-    border-radius: ${isOwner ? '12px 12px 0 12px' : '12px 12px 12px 0'};
-    color: ${isOwner ? palette.colors.white : palette.colors.dark};
-    padding: 10px;
-  `,
-);
-
-export const MessageDetails = styled.div`
-  padding: 0 0 5px 5px;
-`;

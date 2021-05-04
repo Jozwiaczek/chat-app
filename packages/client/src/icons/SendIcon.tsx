@@ -1,6 +1,6 @@
 import React, { forwardRef, memo, Ref, SVGProps } from 'react';
 
-const ArrowIcon = (props: SVGProps<SVGSVGElement>, svgRef?: Ref<SVGSVGElement>) => (
+const SendIcon = (props: SVGProps<SVGSVGElement>, svgRef?: Ref<SVGSVGElement>) => (
   <svg
     width="34"
     height="34"
@@ -27,4 +27,4 @@ const ArrowIcon = (props: SVGProps<SVGSVGElement>, svgRef?: Ref<SVGSVGElement>) 
   </svg>
 );
 
-export default memo(forwardRef(ArrowIcon));
+export default memo(forwardRef(SendIcon));

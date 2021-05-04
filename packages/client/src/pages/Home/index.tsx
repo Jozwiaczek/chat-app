@@ -25,7 +25,7 @@ const Home = () => {
 
   useHotkeys('Enter', onConfirm);
 
-  const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = ({ target }: ChangeEvent<HTMLTextAreaElement>) => {
     setInputUsername(target.value);
   };
 

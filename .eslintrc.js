@@ -20,6 +20,7 @@ module.exports = {
     'no-console': 0,
     'operator-linebreak': [2, 'after', { overrides: { '?': 'before', ':': 'before' } }],
 
+    '@typescript-eslint/indent': 0,
     '@typescript-eslint/no-unsafe-call': 0,
     '@typescript-eslint/no-unsafe-member-access': 0,
     '@typescript-eslint/explicit-module-boundary-types': 0,

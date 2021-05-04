@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { TextInputProps } from './TextInput.types';
 
-export const StyledInput = styled.input<TextInputProps>(
+export const StyledInput = styled.textarea<TextInputProps>(
   ({ theme: { palette, sizes }, colorVariant }) => css`
     background: ${colorVariant ? palette.colors[colorVariant] : palette.colors.grey};
     border: none;
@@ -12,9 +12,10 @@ export const StyledInput = styled.input<TextInputProps>(
     cursor: text;
     font-size: 18px;
     height: 55px;
-    min-width: 250px;
     outline: none;
-    padding: 0 18px;
+    overflow: hidden;
+    padding: 18px;
+    resize: none;
     width: 100%;
   `,
 );

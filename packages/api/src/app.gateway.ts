@@ -27,13 +27,13 @@ export class AppGateway
     this.messages = [];
   }
 
-  @SubscribeMessage('msgToServer')
+  @SubscribeMessage('newMessageApi')
   handleMessage(client: Socket, newMessage: Message): void {
     this.messages.push(newMessage);
-    this.server.emit('msgToClient', newMessage);
+    this.server.emit('newMessage', newMessage);
   }
 
-  afterInit(server: Server) {
+  afterInit() {
     this.logger.log('Init');
   }
 
@@ -41,7 +41,7 @@ export class AppGateway
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
+  handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
     this.server.emit('syncMessages', this.messages);
   }
