@@ -22,9 +22,7 @@
   - [General installation](#-general-installation)
 - [Packages Docs](#-packages-docs)
 - [Conventional Commits](#-conventional-commits)
-- [Hygen - Code generator](#-hygen-code-generator)
 - [Available scripts](#-available-scripts)
-- [Changelog](#-changelog)
 - [License](#-license)
 
 ## 📖 About
