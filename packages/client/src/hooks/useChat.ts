@@ -11,7 +11,6 @@ const useChat = () => {
     const internalSocket = socketIOClient(SOCKET_SERVER_URL);
 
     internalSocket.on('newMessage', (newMessage: ApiMessage) => {
-      console.log(newMessage);
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
@@ -35,6 +34,7 @@ const useChat = () => {
     const createdAt = new Date();
 
     const emitPayload: ApiMessage = {
+      id: `${socket.id}-${createdAt.valueOf()}`,
       body: messageBody,
       senderId: socket.id,
       nickname,

@@ -62,9 +62,8 @@ const Chat = () => {
         <ChatContainer>
           <MessagesContainer ref={messageContainerRef}>
             {messages.length ? (
-              messages.map((mappedMessage, index) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <Message key={index} currentNickname={nickname} {...mappedMessage} />
+              messages.map((mappedMessage) => (
+                <Message key={mappedMessage.id} currentNickname={nickname} {...mappedMessage} />
               ))
             ) : (
               <NoMessagesInfo />
