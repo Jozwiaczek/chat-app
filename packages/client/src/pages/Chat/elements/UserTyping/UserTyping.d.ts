@@ -1,3 +1,3 @@
 interface UserTypingProps {
-  username: string;
+  typingUsers: Array<string>;
 }

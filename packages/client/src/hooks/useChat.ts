@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import socketIOClient from 'socket.io-client';
 
 import API_EVENTS from '../constants/apiEvents';
@@ -46,31 +46,34 @@ const useChat = () => {
     };
   }, [API_URL, nickname]);
 
-  const emitUserTyping = () => {
+  const emitUserTyping = useCallback(() => {
     socket?.emit(API_EVENTS.userTypingApi, nickname);
-  };
+  }, [nickname, socket]);
 
-  const emitUserStopTyping = () => {
+  const emitUserStopTyping = useCallback(() => {
     socket?.emit(API_EVENTS.userStopTypingApi, nickname);
-  };
+  }, [nickname, socket]);
 
-  const sendMessage = (messageBody: string) => {
-    if (!socket || !nickname) {
-      return;
-    }
+  const sendMessage = useCallback(
+    (messageBody: string) => {
+      if (!socket || !nickname) {
+        return;
+      }
 
-    const createdAt = new Date();
+      const createdAt = new Date();
 
-    const emitPayload: ApiMessage = {
-      id: `${socket.id}-${createdAt.valueOf()}`,
-      body: messageBody,
-      senderId: socket.id,
-      nickname,
-      createdAt,
-    };
+      const emitPayload: ApiMessage = {
+        id: `${socket.id}-${createdAt.valueOf()}`,
+        body: messageBody,
+        senderId: socket.id,
+        nickname,
+        createdAt,
+      };
 
-    socket.emit(API_EVENTS.newMessageApi, emitPayload);
-  };
+      socket.emit(API_EVENTS.newMessageApi, emitPayload);
+    },
+    [nickname, socket],
+  );
 
   return { messages, sendMessage, emitUserTyping, emitUserStopTyping, typingUsers };
 };

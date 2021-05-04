@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from 'styled-components';
 
 export const Placeholder = styled.div`
-  height: 40px;
+  height: 44px;
   width: 100%;
 `;
 

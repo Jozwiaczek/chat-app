@@ -1,6 +1,7 @@
 import React, {
   ChangeEvent,
   KeyboardEvent,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -37,18 +38,18 @@ const Chat = () => {
     history.replace(routesConfig.HOME);
   }
 
-  const handleNewMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleNewMessageChange = useCallback((event: ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(event.target.value);
-  };
+  }, []);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(() => {
     if (!newMessage || !nickname) {
       return;
     }
 
     sendMessage(newMessage);
     setNewMessage('');
-  };
+  }, [newMessage, nickname, sendMessage]);
 
   useLayoutEffect(() => {
     if (messageContainerRef.current) {
@@ -60,22 +61,25 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    if (!newMessage) {
+    if (!newMessage && isTyping) {
       setIsTyping(false);
       emitUserStopTyping();
     }
-  }, [emitUserStopTyping, newMessage]);
+  }, [emitUserStopTyping, isTyping, newMessage]);
 
-  const onInputKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (!isMobile && event.key === 'Enter' && !event.shiftKey) {
-      handleSendMessage();
-      event.preventDefault();
-    }
-    if (!isTyping) {
-      setIsTyping(true);
-      emitUserTyping();
-    }
-  };
+  const onInputKeyPress = useCallback(
+    (event: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (!isTyping) {
+        setIsTyping(true);
+        emitUserTyping();
+      }
+      if (!isMobile && event.key === 'Enter' && !event.shiftKey) {
+        handleSendMessage();
+        event.preventDefault();
+      }
+    },
+    [emitUserTyping, handleSendMessage, isMobile, isTyping],
+  );
 
   return (
     <Container>
@@ -96,9 +100,7 @@ const Chat = () => {
           </MessagesContainer>
           <div>
             {typingUsers.length ? (
-              typingUsers.map((typingUser) => (
-                <UserTyping key={`${typingUser}-typing`} username={typingUser} />
-              ))
+              <UserTyping typingUsers={typingUsers} />
             ) : (
               <UserTypingPlaceholder />
             )}
