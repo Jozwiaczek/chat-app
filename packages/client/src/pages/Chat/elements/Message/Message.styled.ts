@@ -16,6 +16,7 @@ export const Body = styled.p<MessageBaseProps>(
     color: ${isOwner ? palette.colors.white : palette.colors.dark};
     padding: 10px;
     white-space: pre-line;
+    word-break: break-word;
   `,
 );
 

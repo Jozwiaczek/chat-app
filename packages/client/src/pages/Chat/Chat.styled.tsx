@@ -44,6 +44,7 @@ export const MessagesContainer = styled.ol(
     margin-block-end: 0;
     margin-block-start: 0;
     max-height: calc(100% - 200px);
+    max-width: 100%;
     overflow-y: auto;
     padding: 0;
 

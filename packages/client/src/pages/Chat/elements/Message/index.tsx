@@ -9,8 +9,9 @@ const Message = ({ currentNickname, nickname, body, createdAt }: MessageProps) =
 
   const isOwner = nickname === currentNickname;
   const formatMessageDate = (msgDate: Date): string => {
-    const formatter = new Intl.DateTimeFormat('en', {
-      timeStyle: 'short',
+    const formatter = new Intl.DateTimeFormat(navigator.language, {
+      hour: '2-digit',
+      minute: '2-digit',
     });
     return formatter.format(new Date(msgDate));
   };
