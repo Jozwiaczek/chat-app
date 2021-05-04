@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import { Button } from '../../elements';
@@ -42,7 +43,7 @@ export const MessagesContainer = styled.ol(
     flex-direction: column;
     margin-block-end: 0;
     margin-block-start: 0;
-    max-height: calc(100% - 160px);
+    max-height: calc(100% - 200px);
     overflow-y: auto;
     padding: 0;
 
@@ -87,12 +88,18 @@ export const SendButton = styled(Button)`
   top: 5px;
 `;
 
-export const CardHeader = styled.div(
+export const CardHeader = styled(Link)(
   ({ theme: { palette, breakpoints, up } }) => css`
     align-items: center;
     border-bottom: 2px solid ${palette.divider};
     display: flex;
     padding: 20px;
+    text-decoration: none;
+
+    &:hover > * {
+      color: ${palette.colors.blue};
+    }
+
     svg {
       margin-right: 10px;
     }

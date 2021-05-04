@@ -33,6 +33,16 @@ export class AppGateway
     this.server.emit('newMessage', newMessage);
   }
 
+  @SubscribeMessage('userTypingApi')
+  handleTyping(client: Socket, newTypingUsername: string): void {
+    this.server.emit('userTyping', newTypingUsername);
+  }
+
+  @SubscribeMessage('userStopTypingApi')
+  handleStopTyping(client: Socket, newTypingUsername: string): void {
+    this.server.emit('userStopTyping', newTypingUsername);
+  }
+
   afterInit() {
     this.logger.log('Init');
   }

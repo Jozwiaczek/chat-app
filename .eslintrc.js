@@ -52,6 +52,7 @@ module.exports = {
     'import/no-duplicates': 2,
     'import/extensions': [2, 'never', { json: 'always' }],
 
+    'react/jsx-one-expression-per-line': 0,
     'react/prop-types': 0,
     'react/require-default-props': 0,
     'react/jsx-boolean-value': [2, 'never'],

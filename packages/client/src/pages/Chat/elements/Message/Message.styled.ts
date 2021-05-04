@@ -20,5 +20,7 @@ export const Body = styled.p<MessageBaseProps>(
 );
 
 export const Details = styled.div`
-  padding: 0 0 5px 5px;
+  font-size: 14px;
+  font-weight: 300;
+  margin-bottom: 5px;
 `;

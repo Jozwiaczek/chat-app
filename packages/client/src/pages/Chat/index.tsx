@@ -1,8 +1,17 @@
-import React, { ChangeEvent, KeyboardEvent, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  KeyboardEvent,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
-import TextInput from '../../elements/TextInput';
-import { useChat, useLocalStorage, useMediaDevice } from '../../hooks';
+import { TextInput } from '../../elements';
+import { useLocalStorage, useMediaDevice } from '../../hooks';
+import useChat from '../../hooks/useChat';
 import { SendIcon, UserIcon } from '../../icons';
+import routesConfig from '../../routes/routes.config';
 import {
   Card,
   CardHeader,
@@ -12,15 +21,14 @@ import {
   SendButton,
   SendMessageContainer,
 } from './Chat.styled';
-import Message from './Message';
-import NoMessagesInfo from './NoMessagesInfo';
+import { Message, NoMessagesInfo, UserTyping, UserTypingPlaceholder } from './elements';
 
 const Chat = () => {
-  const { sendMessage, messages } = useChat();
+  const { sendMessage, messages, emitUserTyping, emitUserStopTyping, typingUsers } = useChat();
   const [nickname] = useLocalStorage('nickname');
   const messageContainerRef = useRef<HTMLOListElement>(null);
-  const { isDesktop } = useMediaDevice();
-
+  const { isMobile } = useMediaDevice();
+  const [isTyping, setIsTyping] = useState(false);
   const [newMessage, setNewMessage] = useState('');
 
   const handleNewMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -32,7 +40,7 @@ const Chat = () => {
       return;
     }
 
-    sendMessage(newMessage, nickname);
+    sendMessage(newMessage);
     setNewMessage('');
   };
 
@@ -45,17 +53,29 @@ const Chat = () => {
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (!newMessage) {
+      setIsTyping(false);
+      emitUserStopTyping();
+    }
+  }, [emitUserStopTyping, newMessage]);
+
   const onInputKeyPress = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (isDesktop && event.key === 'Enter' && !event.shiftKey) {
+    if (!isMobile && event.key === 'Enter' && !event.shiftKey) {
       handleSendMessage();
       event.preventDefault();
+    }
+    if (!isTyping) {
+      setIsTyping(true);
+      emitUserTyping();
+      console.log('test');
     }
   };
 
   return (
     <Container>
       <Card>
-        <CardHeader>
+        <CardHeader to={routesConfig.HOME}>
           <UserIcon />
           <h3>{nickname}</h3>
         </CardHeader>
@@ -69,6 +89,15 @@ const Chat = () => {
               <NoMessagesInfo />
             )}
           </MessagesContainer>
+          <div>
+            {typingUsers.length ? (
+              typingUsers.map((typingUser) => (
+                <UserTyping key={`${typingUser}-typing`} username={typingUser} />
+              ))
+            ) : (
+              <UserTypingPlaceholder />
+            )}
+          </div>
           <SendMessageContainer>
             <TextInput
               autoFocus

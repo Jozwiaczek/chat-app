@@ -1,0 +1,3 @@
+interface UserTypingProps {
+  username: string;
+}

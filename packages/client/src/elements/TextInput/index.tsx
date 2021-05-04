@@ -3,8 +3,6 @@ import React from 'react';
 import { StyledInput } from './TextInput.styled';
 import { TextInputProps } from './TextInput.types';
 
-const TextInput = ({ error, ...rest }: TextInputProps) => {
-  return <StyledInput type="text" {...rest} />;
-};
+const TextInput = (props: TextInputProps) => <StyledInput type="text" {...props} />;
 
 export default TextInput;
