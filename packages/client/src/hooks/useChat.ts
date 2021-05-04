@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import socketIOClient from 'socket.io-client';
 
+import { API_EVENTS, SOCKET_SERVER_URL } from '../constants';
 import useLocalStorage from './useLocalStorage';
-
-const SOCKET_SERVER_URL = 'http://192.168.1.7:3030';
 
 const useChat = () => {
   const [messages, setMessages] = useState<Array<ApiMessage>>([]);
@@ -14,18 +13,18 @@ const useChat = () => {
   useEffect(() => {
     const internalSocket = socketIOClient(SOCKET_SERVER_URL);
 
-    internalSocket.on('newMessage', (newMessage: ApiMessage) => {
+    internalSocket.on(API_EVENTS.newMessage, (newMessage: ApiMessage) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
-    internalSocket.on('userTyping', (newTypingNickname: string) => {
+    internalSocket.on(API_EVENTS.userTyping, (newTypingNickname: string) => {
       if (nickname === newTypingNickname) {
         return;
       }
       setTypingUsers((prevNicknames) => [...prevNicknames, newTypingNickname]);
     });
 
-    internalSocket.on('userStopTyping', (stopTypingUser: string) => {
+    internalSocket.on(API_EVENTS.userStopTyping, (stopTypingUser: string) => {
       if (nickname === stopTypingUser) {
         return;
       }
@@ -34,7 +33,7 @@ const useChat = () => {
       );
     });
 
-    internalSocket.on('syncMessages', (syncMessages: Array<ApiMessage>) => {
+    internalSocket.on(API_EVENTS.syncMessages, (syncMessages: Array<ApiMessage>) => {
       setMessages(syncMessages);
     });
 
@@ -47,11 +46,11 @@ const useChat = () => {
   }, [nickname]);
 
   const emitUserTyping = () => {
-    socket?.emit('userTypingApi', nickname);
+    socket?.emit(API_EVENTS.userTypingApi, nickname);
   };
 
   const emitUserStopTyping = () => {
-    socket?.emit('userStopTypingApi', nickname);
+    socket?.emit(API_EVENTS.userStopTypingApi, nickname);
   };
 
   const sendMessage = (messageBody: string) => {
@@ -69,7 +68,7 @@ const useChat = () => {
       createdAt,
     };
 
-    socket.emit('newMessageApi', emitPayload);
+    socket.emit(API_EVENTS.newMessageApi, emitPayload);
   };
 
   return { messages, sendMessage, emitUserTyping, emitUserStopTyping, typingUsers };
